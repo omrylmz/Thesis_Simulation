@@ -41,13 +41,11 @@ namespace gazebo
     public:
         void OnUpdate()
         {
-            cout << "gggggggggggggggggggggg\n";
             auto ll_pose = this->l_gripper_l_finger_tip_link->WorldPose();
             auto lr_pose = this->l_gripper_r_finger_tip_link->WorldPose();
             auto rl_pose = this->r_gripper_l_finger_tip_link->WorldPose();
             auto rr_pose = this->r_gripper_r_finger_tip_link->WorldPose();
             
-            // this->unit_box->SetWorldPose((ll_pose + rl_pose) / 2.0);
         }
 
         // Pointer to the unit_box

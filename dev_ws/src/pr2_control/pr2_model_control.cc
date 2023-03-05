@@ -139,81 +139,6 @@ namespace gazebo
           // Releasing ends
       };
 
-      // this->graspSteps = {
-      //     {"CurrentStep", 0},
-      //     {"AttachStart", 7},
-      //     {"GraspingEnd", 8},
-      //     {"DetachStart", 9},
-      //     {"ReleaseEnd", 15},
-      // };
-      // this->graspCfgs = {
-      //     // Steps
-      //     {
-      //         {"l_shoulder_pan_joint", 0.4},  // -0.71 => 2.28
-      //         {"r_shoulder_pan_joint", -0.4}, // -2.28 => 0.71
-      //     },
-      //     {
-      //         {"l_shoulder_lift_joint", 0.6}, // -0.52 => 1.39
-      //         {"r_shoulder_lift_joint", 0.6}, // -0.52 => 1.39
-      //     },
-      //     {
-      //         {"l_elbow_flex_joint", -1.8}, // -2.32 => 0.0
-      //         {"r_elbow_flex_joint", -1.8}, // -2.32 => 0.0
-      //     },
-      //     {
-      //         {"l_upper_arm_roll_joint", 0.8},  // Boundless
-      //         {"r_upper_arm_roll_joint", -0.8}, // Boundless
-      //     },
-      //     {
-      //         {"l_elbow_flex_joint", -0.4}, // -2.32 => 0.0
-      //         {"r_elbow_flex_joint", -0.4}, // -2.32 => 0.0
-      //     },
-      //     {
-      //         {"l_upper_arm_roll_joint", 1.57},  // Boundless
-      //         {"r_upper_arm_roll_joint", -1.57}, // Boundless
-      //     },
-      //     {
-      //         {"l_elbow_flex_joint", -0.6}, // -2.32 => 0.0
-      //         {"r_elbow_flex_joint", -0.6}, // -2.32 => 0.0
-      //     },
-      //     // Attaching
-      //     {
-      //         {"l_shoulder_lift_joint", -0.45}, // -0.52 => 1.39
-      //         {"r_shoulder_lift_joint", -0.45}, // -0.52 => 1.39
-      //     },
-      //     // Graspind ends
-      //     {
-      //         {"l_shoulder_lift_joint", 0.0}, // -0.52 => 1.39
-      //         {"r_shoulder_lift_joint", 0.0}, // -0.52 => 1.39
-      //     },
-      //     // Detaching
-      //     {
-      //         {"l_elbow_flex_joint", 0.0}, // -2.32 => 0.0
-      //         {"l_elbow_flex_joint", 0.0}, // -2.32 => 0.0
-      //     },
-      //     {
-      //         {"l_elbow_flex_joint", -1.0}, // -2.32 => 0.0
-      //         {"r_elbow_flex_joint", -1.0}, // -2.32 => 0.0
-      //     },
-      //     {
-      //         {"l_upper_arm_roll_joint", 0}, // Boundless
-      //         {"r_upper_arm_roll_joint", 0}, // Boundless
-      //     },
-      //     {
-      //         {"l_shoulder_pan_joint", 0}, // -0.71 => 2.28
-      //         {"r_shoulder_pan_joint", 0}  // -2.28 => 0.71
-      //     },
-      //     {
-      //         {"l_shoulder_lift_joint", 1.38}, // -0.52 => 1.39
-      //         {"r_shoulder_lift_joint", 1.38}  // -0.52 => 1.39
-      //     },
-      //     {
-      //         {"l_elbow_flex_joint", -2.31}, // -2.32 => 0.0
-      //         {"r_elbow_flex_joint", -2.31}  // -2.32 => 0.0
-      //     },
-      //     // Releasing ends
-      // };
-
       this->resetPoses();
 
       // Listen to the update event. This event is broadcast every simulation iteration.
@@ -244,9 +169,6 @@ namespace gazebo
         this->isPlanLoaded = true;
       }
 
-      // auto worldPose = this->robot->WorldPose();
-      // std::cout << "State: " << this->state << ", Pose: " << worldPose.X() << ", " << worldPose.Y() << ", " << worldPose.Yaw()
-      //           << " ==>> Target: [" << std::get<0>(this->target) << ", " << std::get<1>(this->target) << "]" << std::endl;
       while (true)
       {
         switch (this->state)
@@ -260,7 +182,6 @@ namespace gazebo
           }
           else
           {
-            std::cout << "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n";
             this->waypoints = this->paths.front();
             this->paths.pop_front();
             this->state = State::WAYPOINT_SELECT;
@@ -278,7 +199,6 @@ namespace gazebo
             this->pidTheta.Reset();
             this->target = this->waypoints.front();
             this->state = State::GRASPING_SELECT;
-            std::cout << "HHHHHHHHHHHHEEEEEEEEEEEEERRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEEEE\n";
           }
           else
           {
@@ -306,7 +226,6 @@ namespace gazebo
             auto linear = ignition::math::Vector3d(0.0, 0.0, 0.0);
             auto angular = ignition::math::Vector3d(0.0, 0.0, ang_input);
             this->robot->SetWorldTwist(linear, angular, true);
-            // std::cout << "Diff: " << this->angleDiff(this->theta, this->yaw) << " --> Command: " << ang_input << "\n\n\n";
             this->handleAttached();
             if (this->graspSteps["CurrentStep"] > 1)
             {
@@ -338,7 +257,6 @@ namespace gazebo
             auto angular = ignition::math::Vector3d(0.0, 0.0, ang_input);
 
             this->robot->SetWorldTwist(linear, angular, true);
-            // std::cout << "Diff: " << this->angleDiff(this->theta, this->yaw) << " --> Command: " << linear << " | " << ang_input << "\n\n\n";
             this->fixBase();
             this->handleAttached();
             return;
@@ -359,14 +277,11 @@ namespace gazebo
               auto linear = ignition::math::Vector3d(0.0, 0.0, 0.0);
               auto angular = ignition::math::Vector3d(0.0, 0.0, ang_input);
               this->robot->SetWorldTwist(linear, angular, true);
-              // std::cout << "Diff: " << this->angleDiff(this->theta, this->yaw) << " --> Command: " << ang_input << "\n\n\n";
               this->fixBase();
               this->handleAttached();
               return;
             }
-            // this->target = this->waypoints.front();
             this->waypoints.pop_front();
-            // this->reroute(this->target);
           }
           std::cout << "GRASP STEP: " << this->graspSteps["CurrentStep"] << std::endl;
           if (this->graspSteps["AttachStart"] == this->graspSteps["CurrentStep"] && !this->isAttached)
@@ -403,12 +318,10 @@ namespace gazebo
           {
             this->findCurrentGraspingGoals();
             this->pidArms.clear();
-            // for (int i = 0; i < this->currGraspCfg.size(); i++)
             for (auto i : ranges::views::iota(0, int(this->currGraspCfg.size())))
             {
               this->pidArms.push_back(common::PID(10, 0.5, 0, 2, -2, 0.002, -0.002));
             }
-            std::cout << "ppppppppppppppppppppppppppppp: " << this->pidArms.size() << std::endl;
             this->state = State::GRASPING;
           }
           break;
@@ -419,19 +332,10 @@ namespace gazebo
           {
             jointController.push_back(std::make_tuple(this->robot->GetJoint(std::get<0>(graspCfg)), std::get<1>(graspCfg),
                                                       this->robot->GetJoint(std::get<0>(graspCfg))->Position() - std::get<1>(graspCfg)));
-            // std::cout << std::get<0>(graspCfg) << ":   Position: " << this->robot->GetJoint(std::get<0>(graspCfg))->Position() << "     Target: "
-            //           << std::get<1>(graspCfg) << "        Diff: " << this->robot->GetJoint(std::get<0>(graspCfg))->Position() - std::get<1>(graspCfg)
-            //           << std::endl
-            //           << std::endl
-            //           << std::endl
-            //           << std::endl;
           }
           if (ranges::all_of(jointController, [](auto &jntCntrl)
                              { if (std::abs(std::get<2>(jntCntrl)) < 0.02) {return true;} else {return false;} }))
           {
-            std::cout << "ggggggggggggggggggggggggggggg" << std::endl
-                      << std::endl
-                      << std::endl;
             // for (const auto& [i, jntCntrl] : jointController | ranges::views::enumerate)
             // {
             //   std::get<0>(jntCntrl)->SetPosition(0, std::get<1>(jntCntrl));
@@ -458,31 +362,12 @@ namespace gazebo
               this->fixBase();
               this->handleAttached();
             }
-            // for (auto &lnkName : this->currFixed)
-            // {
-            //   this->robot->GetLink(lnkName)->SetRelativePose(this->attachedRelPoses[lnkName], false);
-            // }
             return;
           }
           break;
         }
       }
 
-      // this->baseLink->SetRelativePose(this->initRelPoses[this->baseLink->GetName()]);
-      // for (auto lnk : this->robot->GetLinks())
-      // {
-      //   if (lnk->GetName() != "l_elbow_flex_link" && lnk->GetName() != "r_elbow_flex_link")
-      //   {
-      //     lnk->SetRelativePose(this->initRelPoses[lnk->GetName()], false);
-      //   }
-      // }
-      // for (auto jnt : this->robot->GetJoints())
-      // {
-      //   if (jnt->GetName() == "l_elbow_flex_joint" || jnt->GetName() == "r_elbow_flex_joint")
-      //   {
-      //     jnt->SetVelocity(0, 4.0);
-      //   }
-      // }
     }
 
     // Handle relative poses
@@ -520,24 +405,6 @@ namespace gazebo
         this->world->ModelByName(this->attachedBoxName)->SetWorldPose(graspCenter);
       }
     }
-
-    //   // Handle attached object
-    // private:
-    //   void handleAttached()
-    //   {
-    //     if (this->isAttached)
-    //     {
-    //       auto graspCenter = this->findGraspCenter();
-    //       auto x = graspCenter.X() + this->graspOffSet.X();
-    //       auto y = graspCenter.Y() + this->graspOffSet.Y();
-    //       auto z = graspCenter.Z() + this->graspOffSet.Z();
-    //       auto roll = graspCenter.Roll() + this->graspOffSet.Roll();
-    //       auto pitch = graspCenter.Pitch() + this->graspOffSet.Pitch();
-    //       auto yaw = graspCenter.Yaw() + this->graspOffSet.Yaw();
-    //       auto poseTarget = ignition::math::Pose3d(x, y, z, roll, pitch, yaw);
-    //       this->world->ModelByName(this->attachedBoxName)->SetWorldPose(poseTarget);
-    //     }
-    //   }
 
     // Center of hands
   private:
@@ -595,18 +462,6 @@ namespace gazebo
     {
       this->currGraspCfg = this->graspCfgs[this->graspSteps["CurrentStep"]];
       this->graspSteps["CurrentStep"] = this->graspSteps["CurrentStep"] + 1;
-      // this->currFixed.clear();
-      // for (auto [lnkName, _] : this->currGraspCfg)
-      // {
-      //   // auto candidateEntity = lnkName.substr(0, lnkName.size() - 5) + "link";
-      //   // if (std::find(currFixed.begin(), currFixed.end(), "abc") == currFixed.end())
-      //   auto candidateEntity = (lnkName | ranges::views::slice(0, int(lnkName.size()) - 5) | ranges::to<std::string>()) + "link";
-      //   if (ranges::find(currFixed, "abc") == currFixed.cend())
-      //   {
-      //     this->currFixed.push_back(candidateEntity);
-      //     std::cout << "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL " << candidateEntity << std::endl;
-      //   }
-      // }
     }
 
     // Should be called when target or pose updated
@@ -640,7 +495,6 @@ namespace gazebo
       double z = basePose.Z();
       double yaw = basePose.Yaw();
       auto fixedPose = ignition::math::v6::Pose3d(x, y, z, 0, 0, yaw);
-      // this->baseLink->SetWorldPose(fixedPose);
     }
 
     // Reset poses
@@ -666,11 +520,6 @@ namespace gazebo
       this->robot->GetJoint("r_elbow_flex_joint")->SetPosition(0, -2.2);
       this->robot->GetJoint("l_shoulder_lift_joint")->SetPosition(0, 1.25);
       this->robot->GetJoint("r_shoulder_lift_joint")->SetPosition(0, 1.25);
-
-      // this->robot->GetJoint("l_elbow_flex_joint")->SetPosition(0, -2.31);
-      // this->robot->GetJoint("r_elbow_flex_joint")->SetPosition(0, -2.31);
-      // this->robot->GetJoint("l_shoulder_lift_joint")->SetPosition(0, 1.38);
-      // this->robot->GetJoint("r_shoulder_lift_joint")->SetPosition(0, 1.38);
 
       // Record released relative poses of each entity for resetting
       for (auto lnk : this->robot->GetLinks())
@@ -818,110 +667,3 @@ namespace gazebo
   // Register this plugin with the simulator
   GZ_REGISTER_MODEL_PLUGIN(ModelPush)
 }
-
-// case State::GRASPING_SELECT:
-//   if (this->graspSteps["GraspingEnd"] == 0)
-//   {
-//     std::cout << " ";
-//     this->state = State::PATH_SELECT;
-//   }
-//   else
-//   {
-//     this->currGraspCfg = this->graspCfgs.front();
-//     this->graspCfgs.pop_front();
-//     for (int i = 0; i < this->currGraspCfg.size(); i++)
-//     {
-//       this->pidArms.push_back(common::PID(1, 0.1, 0, 2, -2, 20, -20));
-//     }
-//     std::cout << "ppppppppppppppppppppppppppppp" << this->pidArms.size() << std::endl;
-//     // this->pidLeftArm.SetPGain(1);
-//     // this->pidLeftArm.SetIGain(0.2);
-//     // this->pidLeftArm.SetDGain(0.0);
-//     // this->pidRightArm.SetPGain(1);
-//     // this->pidRightArm.SetIGain(0.2);
-//     // this->pidRightArm.SetDGain(0.0);
-//     this->state = State::GRASPING;
-//   }
-//   break;
-
-// case State::GRASPING:
-//   auto graspConfig = this->currGraspCfg[0];
-//   auto leftJnt = this->robot->GetJoint(std::get<0>(graspConfig));
-//   auto leftTarget = std::get<1>(graspConfig);
-//   auto leftError = leftJnt->Position() - leftTarget;
-//   graspConfig = this->currGraspCfg[1];
-//   auto rightJnt = this->robot->GetJoint(std::get<0>(graspConfig));
-//   auto rightTarget = std::get<1>(graspConfig);
-//   auto rightError = rightJnt->Position() - rightTarget;
-
-//   std::cout << "Left: " << leftJnt->Position() << " LTLTLTLTLT " << leftTarget << " |||| "
-//        << "Right: " << rightJnt->Position() << " RTRTRTRTRT " << rightTarget << std::endl;
-//   std::cout << "Left Error: " << leftError << " | Right Error: " << rightError << std::endl
-//        << std::endl;
-
-//   // if (std::abs(leftError) < 0.02)
-//   // {
-//   //   leftJnt->SetPosition(0, leftTarget);
-//   //   leftError = 0;
-//   //   this->pidLeftArm.Reset();
-//   // }
-//   // if (std::abs(rightError) < 0.02)
-//   // {
-//   //   rightJnt->SetPosition(0, rightTarget);
-//   //   rightError = 0;
-//   //   this->pidRightArm.Reset();
-//   // }
-//   if (std::abs(leftError) < 0.02 && std::abs(rightError) < 0.02)
-//   {
-//     this->currGraspCfg.pop_front();
-//     this->currGraspCfg.pop_front();
-//     this->pidLeftArm.Reset();
-//     this->pidRightArm.Reset();
-//     leftJnt->SetPosition(0, leftTarget);
-//     rightJnt->SetPosition(0, rightTarget);
-//     std::cout << "POPPPPPPPPPPPPPPPPPP" << std::endl
-//          << std::endl
-//          << std::endl;
-//     return;
-//   }
-//   else
-//   {
-//     auto leftCmd = this->pidLeftArm.Update(leftError, 0.04);
-//     auto rightCmd = this->pidRightArm.Update(rightError, 0.04);
-//     leftJnt->SetVelocity(0, leftCmd);
-//     rightJnt->SetVelocity(0, rightCmd);
-//     // this->grasp(std::get<0>(graspConfig), leftCmd, rightCmd);
-//     return;
-//   }
-
-//   // this->state = State::PATH_SELECT;
-//   break;
-
-//  private:
-// void grasp(std::string entityName, double leftCmd, double rightCmd)
-// {
-//   std::cout << "COMMANDS: " << leftCmd << ":  " << rightCmd << std::endl
-//        << std::endl
-//        << std::endl
-//        << std::endl
-//        << std::endl;
-//   // this->baseLink->SetRelativePose(this->initRelPoses[this->baseLink->GetName()]);
-//   // for (auto lnk : this->robot->GetLinks())
-//   // {
-//   //   if (lnk->GetName() != "l_" + entityName + "_link" && lnk->GetName() != "r_" + entityName + "_link")
-//   //   {
-//   //     lnk->SetRelativePose(this->initRelPoses[lnk->GetName()], false);
-//   //   }
-//   // }
-//   for (auto jnt : this->robot->GetJoints())
-//   {
-//     if (jnt->GetName() == "l_" + entityName + "_joint" && std::abs(leftCmd) > 0.001)
-//     {
-//       jnt->SetVelocity(0, leftCmd);
-//     }
-//     if (jnt->GetName() == "r_" + entityName + "_joint" && std::abs(rightCmd) > 0.001)
-//     {
-//       jnt->SetVelocity(0, rightCmd);
-//     }
-//   }
-// }
